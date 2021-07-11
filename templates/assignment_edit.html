@@ -74,23 +74,6 @@
 
             <button type="submit" class="btn-lightblue px-4 py-2"><i class="fas fa-save"></i> Save</button>
             <a href="/assignment/{{ assignment['code'] }}" class="ml-1 btn-lightblue px-3 py-2">Cancel</a>
-
-            <div class="modal" id="deleteModal" role="dialog" tabindex="-1">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Confirm assignment deletion</h5>
-                        </div>
-                        <div class="modal-body">
-                            <div class="">Please type <span class="text-danger font-weight-bold">{{ assignment['name'] }}</span> to confirm deletion</div>
-                            <div class="my-3">
-                                <input type="text" id="delete_confirm" class="rounded form-control" oninput="confirmDelete(this.value)" placeholder="{{ assignment['name'] }}" />
-                            </div>
-                            <a href="/assignment/{{ assignment['code'] }}/delete" class="btn btn-block btn-outline-danger disabled" id="confirm_delete" disabled>Delete assignment</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </form>
 
     </div>
@@ -99,14 +82,6 @@
 
 
 {% block scripts %}
-<script>
-    function confirmDelete(val) {
-        if (val == "{{ assignment['name'] }}")
-            document.getElementById('confirm_delete').classList.remove("disabled");
-        else
-            document.getElementById('confirm_delete').classList.add("disabled");
-    }
-</script>
 <script>
     function addInputOutputCase() {
         const inputCases = document.getElementById("inputCases");

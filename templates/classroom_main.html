@@ -44,8 +44,6 @@
         <section id="team" class="team section-bg">
             <div class="container" data-aos="fade-up">
                 <div class="row">
-
-
                     {% for idx in range(0, assignments|length, 3) %}
                     {% for assignment in assignments[idx:idx+3] %}
                     <div class="col-lg-6 my-3">
@@ -58,39 +56,27 @@
                                 <span >
                                     Due:
                                     <span class="
-                                                    {% if assignment.deadline and assignment.deadline < current_time() %}
-                                                        text-danger
-                                                            
-                                                    {% else %}
-                                                    text-success
-                                            
-                                                    {% endif %}">
+                                        {% if assignment.deadline and assignment.deadline < current_time() %}
+                                            text-danger
+                                        {% else %}
+                                            text-success
+                                        {% endif %}">
                                         {{ strftime(assignment.deadline) }}
                                     </span>
                                 </span>
-                               
+
                             </div>
                         </div>
                     </div>
                     {% endfor %}
-
                     {% endfor %}
-
-
-
                 </div>
-                
-
             </div>
         </section>
 
         {% if session["user_type"] == "teacher" %}
         <div class="row mt-4 align-middle mx-auto">
             <h5 class="col-auto mr-auto">Students</h5>
-            <!-- <div class="col-sm-6 w-auto col-12 text-center">
-                    <!-- <input type="email" placeholder="Enter student email" class="form-control"/> -->
-            <!-- <button type="button" class="btn btn-sm btn-outline-success">Add a student</button>
-                </div> -->
         </div>
 
         <table class="table table-hover mx-auto">
@@ -115,25 +101,9 @@
             </tr>
             {% endfor %}
         </table>
-
-
         {% endif %}
     </div>
-
-
-
 </div>
 
 
-{% endblock %}
-
-{% block scripts %}
-<script>
-    function confirmDelete(val) {
-        if (val == "{{ classroom['name'] | safe }}")
-            document.getElementById('confirm_delete').classList.remove("disabled");
-        else
-            document.getElementById('confirm_delete').classList.add("disabled");
-    }
-</script>
 {% endblock %}

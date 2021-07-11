@@ -62,12 +62,12 @@ def register():
     password=request.form.get("password")
     verify_password=request.form.get("verify_password")
 
-    user = GetUser(email)
-    if isinstance(user, Student) or isinstance(user, Teacher) :
+    if Teacher.query.filter_by(email=email).first() or Student.query.filter_by(email=email).first():
         flash(f"User with email {email} already exists!", "danger")
         return redirect(url_for("home"))
     else:
         if verify_password == password:
+            user = None
             if user_type =="student":
                 user = Student(name,email,password)
             if user_type =="teacher":
@@ -135,7 +135,7 @@ def dashboard():
                 "name": classroom.name,
                 "desc": classroom.description,
                 "code": classroom.code,
-                "assignment": None
+                "assignment": classroom.assignments[0] if classroom.assignments else None
             })
 
         return render_template("teacher_dashboard.html", classes=classes)
@@ -165,7 +165,7 @@ def dashboard():
                 "name": classroom.name,
                 "desc": classroom.description,
                 "code": classroom.code,
-                "assignment": None
+                "assignment": classroom.assignments[0] if classroom.assignments else None
             })
 
         return render_template("student_dashboard.html", classes=classes)

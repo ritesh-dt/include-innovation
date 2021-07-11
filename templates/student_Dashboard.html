@@ -7,18 +7,6 @@
 
 {% block nav %}{% endblock %}
 {% block body %}
-
-
-<!-- <form method="POST" class="row my-4">
-    <div class="col-6">
-        <input type="text" class="form-control" name="class_code" placeholder="Enter class code" required>
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-outline-success">Join class</button>
-    </div>
-</form> -->
-
-
 <div class="container my-3">
 
     <div class="row">
@@ -37,40 +25,36 @@
     </div>
 
 
-    
+
     <section id="team" class="team section-bg">
         <div class="container" data-aos="fade-up">
           <div class="row">
-  
-            
+
+
             {% for subject in classes %}
             <div class="col-lg-6 my-3">
             <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="100">
                 <div class="pic"><img src="{{ url_for('static', filename='img/class_avatar.png') }}" class="img-fluid" alt=""></div>
-                
+
                 <div class="member-info">
-                  <h4>{{ subject['name'] }}</h4>
-                  <span>{{ subject['desc'] }}</span>
-                  {% if subject['assignment'] %}
-                                        <span class="align-middle col pl-0">{{ subject['assignment'].name }}</span>
-                                {% else %}
-                                    <span class="align-middle col pl-0">No current assignments!</span>
-                                {% endif %}
-                
-                  <div>
+                    <h4>{{ subject['name'] }}</h4>
+                    <span>{{ subject['desc'] }}</span>
+
+                    {% if subject['assignment'] %}
+                            <span class="align-middle col pl-0">{{ subject['assignment'].name }}</span>
+                    {% else %}
+                        <span class="align-middle col pl-0">No current assignments!</span>
+                    {% endif %}
+
+                    <div>
                     <a href="/classroom/{{ subject['code'] }}" class="btn-lightblue px-3 py-2 ml-auto">View</a>
                   </div>
                 </div>
               </div>
             </div>
             {% endfor %}
-              
-            
-  
-            
-  
           </div>
-  
+
         </div>
     </section>
     <div class="container my-5"></div>

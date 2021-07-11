@@ -6,62 +6,49 @@
 
 
 <div class="container my-3">
-
-    
-
-    <div class="row">
-        <h4 class="text-sm-center text-lg-left mb-0 offset-1 col-1">Classrooms</h4>
-        <div class="col-6"></div>
-        <div class="col-3">
-            <form method="POST" class="row">
-                <div class="col-auto">
-                    <button class="btn-lightblue px-3 py-2" data-toggle="modal"
-                    data-target="#ClassModal">Create New Class</button>
-                    
-                </div>
-
-
-
-                {% include 'login_modal.html' %}
-
+  <div class="row">
+    <h4 class="text-sm-center text-lg-left mb-0 offset-1 col-1">Classrooms</h4>
+    <div class="col-6"></div>
+    <div class="col-3">
+      <form method="POST" class="row">
+        <div class="col-auto">
+          <button class="btn-lightblue px-3 py-2" data-toggle="modal" data-target="#ClassModal">Create New
+            Class</button>
         </div>
+        {% include 'login_modal.html' %}
     </div>
-    </div>
+  </div>
+</div>
 
 <section id="team" class="team section-bg">
-    <div class="container" data-aos="fade-up">
-      <div class="row">
+  <div class="container" data-aos="fade-up">
+    <div class="row">
 
-        
-        {% for subject in classes %}
-        <div class="col-lg-6 my-3">
+
+      {% for subject in classes %}
+      <div class="col-lg-6 my-3">
         <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="100">
-            <div class="pic"><img src="{{ url_for('static', filename='img/class_avatar.png') }}" class="img-fluid" alt=""></div>
-            
-            <div class="member-info">
-              <h4>{{ subject['name'] }}</h4>
-              <span>{{ subject['desc'] }}</span>
-              {% if subject['assignment'] %}
-                                    <span class="align-middle col pl-0">{{ subject['assignment'].name }}</span>
-                            {% else %}
-                                <span class="align-middle col pl-0">No current assignments!</span>
-                            {% endif %}
-            
-              <div>
-                <a href="/classroom/{{ subject['code'] }}" class="btn-lightblue px-3 py-2 ml-auto">View</a>
-              </div>
+          <div class="pic"><img src="{{ url_for('static', filename='img/class_avatar.png') }}" class="img-fluid" alt="">
+          </div>
+
+          <div class="member-info">
+            <h4>{{ subject['name'] }}</h4>
+            <span>{{ subject['desc'] }}</span>
+            {% if subject['assignment'] %}
+              <span class="align-middle col pl-0">{{ subject['assignment'].name }}</span>
+            {% else %}
+              <span class="align-middle col pl-0">No current assignments!</span>
+            {% endif %}
+
+            <div>
+              <a href="/classroom/{{ subject['code'] }}" class="btn-lightblue px-3 py-2 ml-auto">View</a>
             </div>
           </div>
         </div>
-        {% endfor %}
-          
-        
-
-        
-
       </div>
-
+      {% endfor %}
     </div>
+  </div>
 </section>
 
 {% endblock %}
