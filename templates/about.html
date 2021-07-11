@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}About us{% endblock title %}
+{% block body %}
+<div class="about py-3">
+    <section id="team" class="team section-bg">
+        <div class="container" data-aos="fade-up">
+    
+          <div class="section-title">
+            <h2>Team</h2>
+            <p>We are from team include innovation, feel free to contact on any social platform. <br>We are eager to answer the queries.</p>
+          </div>
+    
+          <div class="row">
+    
+            <div class="col-lg-6">
+              <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="100">
+                <div class="pic"><img src="{{ url_for('static', filename='img/ritesh.png') }}" class="img-fluid" alt=""></div>
+                <div class="member-info">
+                  <h4>Ritesh Thakur</h4>
+                  <span>Backend Developer</span>
+                  
+                  <div class="social">
+                    <a href=""><i class="ri-github-fill"></i></a>
+                    <a href=""><i class="ri-instagram-fill"></i></a>
+                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-lg-6 mt-4 mt-lg-0">
+              <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="200">
+                <div class="pic"><img src="{{ url_for('static', filename='img/vishal.png') }}" class="img-fluid" alt=""></div>
+                <div class="member-info">
+                  <h4>Vishal Thoke</h4>
+                  <span>Frontend UI/UX Developer</span>
+                 
+                  <div class="social">
+                    <a href=""><i class="ri-github-fill"></i></a>
+                    <a href=""><i class="ri-instagram-fill"></i></a>
+                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-lg-6 mt-4">
+              <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="300">
+                <div class="pic"><img src="{{ url_for('static', filename='img/utsav.png') }}" class="img-fluid" alt=""></div>
+                <div class="member-info">
+                  <h4>Utsav Patel</h4>
+                  <span>Frontend UI/UX Developer</span>
+                  
+                  <div class="social">
+                    <a href=""><i class="ri-github-fill"></i></a>
+                    <a href=""><i class="ri-instagram-fill"></i></a>
+                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-lg-6 mt-4">
+              <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="400">
+                <div class="pic"><img src="{{ url_for('static', filename='img/sushant.png') }}" class="img-fluid" alt=""></div>
+                <div class="member-info">
+                  <h4>Sushant Vaidkar</h4>
+                  <span>Backend Developer</span>
+                  <div class="social">
+                    <a href=""><i class="ri-github-fill"></i></a>
+                    <a href=""><i class="ri-instagram-fill"></i></a>
+                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+          </div>
+    
+        </div>
+      </section>   
+    
+</div>
+
+
+
+{% endblock body %}
