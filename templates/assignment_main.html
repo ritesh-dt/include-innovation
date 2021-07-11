@@ -12,7 +12,7 @@
     .case-danger {
         font-family: 'arial';
         color: #000;
-        border-left: 5px solid #dd0000;
+        border-left: 1px solid #dd0000;
         padding: 8px 0px 8px 6px;
         background-color: #ffbbbb;
     }
@@ -20,7 +20,7 @@
     .case-success {
         font-family: 'arial';
         color: #000;
-        border-left: 5px solid #00aa00;
+        border-left: 1px solid #00aa00;
         padding: 8px 0px 8px 6px;
         background-color: #bbffbb;
     }
@@ -231,13 +231,6 @@
 {% block scripts %}
 
 <script>
-
-    function fullScreen(){
-        var elem = document.getElementById("code");
-        elem.style.width = "100vw";
-        elem.style.height="100vh";
-    }
-
     language = document.getElementById("language").value;
     program = document.getElementById("code").value;
 
@@ -272,18 +265,19 @@
 
                     elem = document.createElement("div");
 
+
                     let pChild = document.createElement("pre");
                     elem.appendChild(pChild);
 
-                    elem.className = "col-12 col-md-6 col-lg-3";
+                    elem.className = "col-12 col-md-6 col-lg-6";
                     pChild.className = "font-weight-bold";
 
                     pChild.textContent = "Test case " + i + ": " + test_cases[i]["output"];
 
                     if (test_cases[i]["solved"] == false)
-                        pChild.classList += " bg-danger";
+                        pChild.classList += " card p-3 fs-4 text-danger overflow-wrap ";
                     else
-                        pChild.classList += " bg-success";
+                        pChild.classList += " card p-3 fs-4 text-success ";
                     results.appendChild(elem);
 
                 }

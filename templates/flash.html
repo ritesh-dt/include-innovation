@@ -3,7 +3,7 @@
 
         {% for category, msg in messages %}
 
-        <div class="alert
+        <div id="alert" class="alert
             {% if category == 'danger' %}
                 alert-danger
             {% elif category == 'warning' %}
@@ -22,7 +22,16 @@
               <span aria-hidden="true">&times;</span>
             </button>
         </div>
+       
 
         {% endfor %}
     {% endwith %}
 </div>
+
+<script type="text/javascript">
+    setTimeout(function () {
+
+        // Closing the alert
+        $('#alert').alert('close');
+    }, 2000);
+</script>
