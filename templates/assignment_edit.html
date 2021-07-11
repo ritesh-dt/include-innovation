@@ -45,13 +45,13 @@
                 <div class="col-auto"></div>
 
                 <div class="col-lg-4 col-md-12 mb-3" id="inputCases">
-                    {% for input_case in assignment['input_cases'].split("---")  %}
+                    {% for input_case in assignment['input_cases'].split("----")  %}
                         <textarea class="form-control mb-2"  name="assignment_input_case_{{ loop.index-1 }}" id="assignment_input_case_{{ loop.index-1 }}" rows="1">{{ input_case }}</textarea>
                     {% endfor %}
                 </div>
 
                 <div class="col-lg-4 col-md-12 mb-3" id="outputCases">
-                    {% for output_case in assignment['output_cases'].split("---")  %}
+                    {% for output_case in assignment['output_cases'].split("----")  %}
                         <textarea class="form-control mb-2" name="assignment_output_case_{{ loop.index-1 }}" id="assignment_output_case_{{ loop.index-1}}" rows="1">{{ output_case }}</textarea>
                     {% endfor %}
                 </div>

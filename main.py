@@ -584,12 +584,13 @@ def AssignmentResults(assignment_code):
     idx = 1
 
     for student in assignment.classroom.students:
-        if not total_test_cases:
-            total_test_cases = len(submission.results)
         submissions = Submission.query.filter_by(assignment=assignment, student=student)
 
         submitted = False
         for submission in submissions:
+            if not total_test_cases:
+                total_test_cases = len(submission.results)
+
             if submission.student == student and submission.file_name.split(".txt")[0][-1] == "1":
                 csv_data += f"{idx}, {submission.student.name}, {submission.assignment.classroom.name}, {submission.assignment.name}, {submission.results.count('1')}, {total_test_cases}\n"
                 idx += 1
