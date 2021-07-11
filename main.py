@@ -4,6 +4,8 @@ from flask import render_template,request,redirect,url_for,flash,session
 from datetime import datetime
 import os, json
 
+from flask.helpers import send_file
+
 # Database and Models
 from models.database import db
 from models.student import Student
@@ -43,7 +45,7 @@ def login():
             session["user_type"] = user.user_type
 
             flash(f"Login Successful !", "success")
-            return redirect(url_for("home"))
+            return redirect(url_for("dashboard"))
         else:
             flash(f"Invalid Password !", "danger")
             return redirect(url_for("home"))
@@ -80,7 +82,7 @@ def register():
             session["user_type"] = user.user_type
 
             flash("Registered successfully!", "success")
-            return redirect(url_for("home"))
+            return redirect(url_for("dashboard"))
         else:
             flash(f"Invalid Password !", "danger")
             return redirect(url_for("home"))
@@ -216,6 +218,82 @@ def ClassroomMain(class_code):
     assignments = Assignment.query.filter_by().first()
 
     return render_template("classroom_main.html", classroom=classroom, assignments=classroom.assignments, current_time=datetime.now, strftime=lambda x: x.strftime("%a, %d %b %Y at %I:%M %p"))
+
+@app.route("/assignment/<assignment_code>/edit", methods=["GET", "POST"])
+def AssignmentEdit(assignment_code):
+    is_teacher = AuthorizeUser("teacher")
+    if not is_teacher:
+        flash(f"Permission denied!", "danger")
+        return redirect(url_for("home"))
+
+    assignment = Assignment.query.filter_by(code=assignment_code).first()
+    if not assignment:
+        flash(f"Assignment not found!", "warning")
+        return redirect(url_for("dashboard"))
+
+
+    if request.method == "GET":
+        return render_template("assignment_edit.html", assignment=assignment)
+    else:
+
+        classroom = Classroom.query.filter_by(code=assignment.classroom.code).first()
+
+        user = GetUser(session["email"])
+        if classroom not in user.classrooms:
+            flash("Permission denied!", "danger")
+            return redirect(url_for("dashboard"))
+
+        name = request.form.get("assignment_name")
+        description = request.form.get("assignment_desc")
+        input_format = request.form.get("assignment_input_format")
+        output_format = request.form.get("assignment_output_format")
+
+        input_cases = []
+        for k in request.form.keys():
+            if "assignment_input_case" in k:
+                input_cases.append(request.form.get(k))
+        input_cases = "----".join(str(x) for x in input_cases if x)
+
+        output_cases = []
+        for k in request.form.keys():
+            if "assignment_output_case" in k:
+                output_cases.append(request.form.get(k))
+        output_cases = "----".join(str(x) for x in output_cases if x)
+
+        constraints = request.form.get("assignment_constraints")
+        deadline = request.form.get("assignment_deadline")
+
+        assignment.name = name
+        assignment.description = description
+        assignment.deadline = deadline
+        assignment.classroom = classroom
+        assignment.input_format = input_format
+        assignment.output_format = output_format
+        assignment.input_cases = input_cases
+        assignment.output_cases = output_cases
+        assignment.constraints = constraints
+        db.session.commit()
+
+
+        # Update submissions
+        submissions = Submission.query.filter_by(assignment=assignment, student=student)
+
+        submitted = False
+        for submission in submissions:
+            submission_file = open(submission.file_name, "r")
+            code = submission_file.read()
+            submission_file.close()
+            results = json.loads(SubmissionCheck(code, submission.language, assignment_code=assignment.code))
+            submission.results = "".join(["1" if test_case["solved"] else "0" for test_case in results["test_cases"]])
+            db.session.commit()
+
+        assignment_folder = f"{UPLOAD_FOLDER}/{assignment.code}/"
+        if not os.path.exists(assignment_folder):
+            os.mkdir(assignment_folder)
+
+        flash("Assignment edited successfully!", "success")
+        return redirect(f"/classroom/{classroom.code}")
+
 
 @app.route("/classroom/<class_code>/assignment/create", methods=["GET", "POST"])
 def AssignmentCreate(class_code):
@@ -487,6 +565,43 @@ def check_output(output, output_test_case):
             return False
 
     return True
+
+@app.route("/assignment/<assignment_code>/results", methods=["GET"])
+def AssignmentResults(assignment_code):
+    is_teacher = AuthorizeUser("teacher")
+    if not is_teacher:
+        flash(f"Permission denied!", "danger")
+        return redirect(url_for("home"))
+
+    assignment = Assignment.query.filter_by(code=assignment_code).first()
+    if not assignment:
+        flash(f"Assignment not found!", "warning")
+        return redirect(url_for("dashboard"))
+
+
+
+    csv_data = "Sr No., Name, Classroom, Assignment, Results\n"
+    submissions = Submission.query.filter_by(assignment=assignment)
+    idx = 1
+
+    for student in assignment.classroom.students:
+        submissions = Submission.query.filter_by(assignment=assignment, student=student)
+
+        submitted = False
+        for submission in submissions:
+            if submission.student == student and submission.file_name.split(".txt")[0][-1] == "1":
+                csv_data += f"{idx}, {submission.student.name}, {submission.assignment.classroom.name}, {submission.assignment.name}, {submission.results}\n"
+                idx += 1
+                submitted = True
+                break
+        if not submitted:
+            csv_data += f"{idx}, {submission.student.name}, {submission.assignment.classroom.name}, {submission.assignment.name}, Not submitted\n"
+
+    results_file = open(f"{UPLOAD_FOLDER}/{assignment_code}/results.csv", "w+")
+    results_file.write(csv_data)
+    results_file.close()
+
+    return send_file(f"{UPLOAD_FOLDER}/{assignment_code}/results.csv", as_attachment=True, download_name=f"{submission.assignment.classroom.name} - {submission.assignment.name}.csv")
 
 if __name__ == "__main__":
     app.run(debug=True)

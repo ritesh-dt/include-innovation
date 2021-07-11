@@ -9,7 +9,7 @@ def create_assignment_code():
         code = ""
         for letter in range(5):
             code = code + choice(ascii_letters)
-        if Assignment.query.filter_by(code=code).first() is None:
+        if Submission.query.filter_by(code=code).first() is None:
             break
 
     return code
@@ -24,8 +24,8 @@ class Submission(db.Model):
     assignment_id = db.Column(db.Integer, db.ForeignKey("assignment.id"))
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"))
 
-    def __init__(self, file_name, results, language, assignment, student) -> None:
-        super().__init__()
+    def _init_(self, file_name, results, language, assignment, student) -> None:
+        super()._init_()
 
         self.file_name = file_name
         self.results = results
