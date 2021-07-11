@@ -89,9 +89,9 @@
 
                 <div class="col-auto ml-auto px-1 mr-3 align-items-center">
                     <span class="ml-3">Results</span>
-                    <a href="/submission/download/{{ assignment['code'] }}/results">
-                        <img src="{{ url_for('static', filename='img/download-file.png') }}" class="img" width="35px"
-                            height="35px" alt="&downarrow;" /></a>
+                    <a href="/assignment/{{ assignment['code'] }}/results" class="text-success">
+                        &downarrow;
+                    </a>
                 </div>
 
             </div>
@@ -237,7 +237,7 @@
         elem.style.width = "100vw";
         elem.style.height="100vh";
     }
-    
+
     language = document.getElementById("language").value;
     program = document.getElementById("code").value;
 

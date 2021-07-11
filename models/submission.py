@@ -24,8 +24,8 @@ class Submission(db.Model):
     assignment_id = db.Column(db.Integer, db.ForeignKey("assignment.id"))
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"))
 
-    def _init_(self, file_name, results, language, assignment, student) -> None:
-        super()._init_()
+    def __init__(self, file_name, results, language, assignment, student) -> None:
+        super().__init__()
 
         self.file_name = file_name
         self.results = results

@@ -1,10 +1,8 @@
 from flask import Flask
-from flask import render_template,request,redirect,url_for,flash,session
+from flask import render_template,request,redirect,url_for,flash,session,send_file
 
 from datetime import datetime
 import os, json
-
-from flask.helpers import send_file
 
 # Database and Models
 from models.database import db
@@ -233,7 +231,7 @@ def AssignmentEdit(assignment_code):
 
 
     if request.method == "GET":
-        return render_template("assignment_edit.html", assignment=assignment)
+        return render_template("assignment_edit.html", assignment=assignment, assignment_deadline=assignment.deadline.strftime("%Y-%m-%dT%H:%M"))
     else:
 
         classroom = Classroom.query.filter_by(code=assignment.classroom.code).first()
@@ -261,7 +259,7 @@ def AssignmentEdit(assignment_code):
         output_cases = "----".join(str(x) for x in output_cases if x)
 
         constraints = request.form.get("assignment_constraints")
-        deadline = request.form.get("assignment_deadline")
+        deadline = datetime.strptime(request.form.get("assignment_deadline"), "%Y-%m-%dT%H:%M")
 
         assignment.name = name
         assignment.description = description
@@ -276,7 +274,7 @@ def AssignmentEdit(assignment_code):
 
 
         # Update submissions
-        submissions = Submission.query.filter_by(assignment=assignment, student=student)
+        submissions = Submission.query.filter_by(assignment=assignment)
 
         submitted = False
         for submission in submissions:
@@ -292,7 +290,7 @@ def AssignmentEdit(assignment_code):
             os.mkdir(assignment_folder)
 
         flash("Assignment edited successfully!", "success")
-        return redirect(f"/classroom/{classroom.code}")
+        return redirect(url_for("AssignmentMain", assignment_code=assignment_code))
 
 
 @app.route("/classroom/<class_code>/assignment/create", methods=["GET", "POST"])
@@ -580,17 +578,20 @@ def AssignmentResults(assignment_code):
 
 
 
-    csv_data = "Sr No., Name, Classroom, Assignment, Results\n"
+    csv_data = "Sr No., Name, Classroom, Assignment, Correct test cases, Total test cases\n"
     submissions = Submission.query.filter_by(assignment=assignment)
+    total_test_cases = None
     idx = 1
 
     for student in assignment.classroom.students:
+        if not total_test_cases:
+            total_test_cases = len(submission.results)
         submissions = Submission.query.filter_by(assignment=assignment, student=student)
 
         submitted = False
         for submission in submissions:
             if submission.student == student and submission.file_name.split(".txt")[0][-1] == "1":
-                csv_data += f"{idx}, {submission.student.name}, {submission.assignment.classroom.name}, {submission.assignment.name}, {submission.results}\n"
+                csv_data += f"{idx}, {submission.student.name}, {submission.assignment.classroom.name}, {submission.assignment.name}, {submission.results.count('1')}, {total_test_cases}\n"
                 idx += 1
                 submitted = True
                 break

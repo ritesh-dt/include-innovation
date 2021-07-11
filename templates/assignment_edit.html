@@ -10,7 +10,7 @@
     </div>
     <div class="container p-5" style="background-color: #f3f5fa; border: 1px solid #dfdfff; margin-bottom: 200px;">
         <form action="/assignment/{{ assignment['code'] }}/edit", method="POST">
-        
+
             <div class="mb-4">
                 <label for="assignment_name">
                     <h5 class="">Assignment name:</h5>
@@ -19,9 +19,9 @@
             </div>
             <div class="mb-3">
                 <label for="assignment_desc"><h6>Problem statement:</h6></label>
-                <textarea class="form-control" type="text" maxlength="80" id="assignment_desc" name="assignment_desc" required>{{ assignment['desc'] }}</textarea>
+                <textarea class="form-control" type="text" maxlength="80" id="assignment_desc" name="assignment_desc" required>{{ assignment['description'] }}</textarea>
             </div>
-            
+
             <div class="row">
                 <div class="col-lg-4 col-md-12 mb-3">
                     <label for="assignment_input_format"><h6>Input format</h6></label>
@@ -34,7 +34,7 @@
             </div>
             <div class="row">
                 <template id="templateInputCase">
-                    <textarea class="form-control mb-2" name="assignment" id="" placeholder="" rows="1"></textarea>  
+                    <textarea class="form-control mb-2" name="assignment" id="" placeholder="" rows="1"></textarea>
                 </template>
                 <div class="col-lg-4 col-md-12">
                     <label><h6>Input Cases</h6></label>
@@ -43,24 +43,24 @@
                     <label><h6>Output Cases</h6></label>
                 </div>
                 <div class="col-auto"></div>
-                
+
                 <div class="col-lg-4 col-md-12 mb-3" id="inputCases">
                     {% for input_case in assignment['input_cases'].split("---")  %}
-                        <textarea class="form-control mb-2"  name="assignment_input_case_{{ loop.index-1 }}" id="assignment_input_case_{{ loop.index-1 }}" rows="1">{{ input_case }}</textarea>  
+                        <textarea class="form-control mb-2"  name="assignment_input_case_{{ loop.index-1 }}" id="assignment_input_case_{{ loop.index-1 }}" rows="1">{{ input_case }}</textarea>
                     {% endfor %}
                 </div>
-    
+
                 <div class="col-lg-4 col-md-12 mb-3" id="outputCases">
                     {% for output_case in assignment['output_cases'].split("---")  %}
                         <textarea class="form-control mb-2" name="assignment_output_case_{{ loop.index-1 }}" id="assignment_output_case_{{ loop.index-1}}" rows="1">{{ output_case }}</textarea>
                     {% endfor %}
                 </div>
-    
+
                 <div class="col-lg-4 col-md-12">
                     <button type="button" class="btn-lightblue px-3 py-2" onclick="addInputOutputCase()">Add case</button>
                 </div>
             </div>
-    
+
             <div class="row mb-3">
                 <div class="col-md-8 mb-3 col-sm-12">
                     <label for="assignment_constraints"><h6>Constraints</h6></label>
@@ -71,10 +71,10 @@
                     <input class="form-control" type="datetime-local" id="assignment_deadline" name="assignment_deadline" value="{{ assignment_deadline }}">
                 </div>
             </div>
-            
+
             <button type="submit" class="btn-lightblue px-4 py-2"><i class="fas fa-save"></i> Save</button>
             <a href="/assignment/{{ assignment['code'] }}" class="ml-1 btn-lightblue px-3 py-2">Cancel</a>
-            
+
             <div class="modal" id="deleteModal" role="dialog" tabindex="-1">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -101,7 +101,7 @@
 {% block scripts %}
 <script>
     function confirmDelete(val) {
-        if (val == "{{ assignment['name'] }}") 
+        if (val == "{{ assignment['name'] }}")
             document.getElementById('confirm_delete').classList.remove("disabled");
         else
             document.getElementById('confirm_delete').classList.add("disabled");
@@ -112,7 +112,7 @@
         const inputCases = document.getElementById("inputCases");
         const outputCases = document.getElementById("outputCases");
         const templateInputCase = document.getElementById("templateInputCase");
-        
+
         let lastIndex = 0;
         for (let child of inputCases.children) {
             const childName = child.name.split("_");
@@ -121,7 +121,7 @@
 
         let inputCaseNode = templateInputCase.content.cloneNode(true);
         let inputTextarea = inputCaseNode.querySelector("textarea");
-        
+
         inputTextarea.name = inputTextarea.name + "_input_case_" + lastIndex;
         inputTextarea.id = inputTextarea.name;
         inputTextarea.placeholder = "Input case " + (lastIndex+1);
@@ -129,7 +129,7 @@
 
         let outputCaseNode = templateInputCase.content.cloneNode(true);
         let outputTextarea = outputCaseNode.querySelector("textarea");
-        
+
         outputTextarea.name = outputTextarea.name + "_output_case_" + lastIndex;
         outputTextarea.id = outputTextarea.name;
         outputTextarea.placeholder = "Output case " + (lastIndex+1);
