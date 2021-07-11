@@ -291,7 +291,8 @@ def AssignmentMain(assignment_code):
         return redirect(url_for("dashboard"))
 
     user = GetUser(session["email"])
-    file_names = [f"{UPLOAD_FOLDER}/{assignment_code}/{user.id}-{idx}.txt" for idx in range(3)]
+    file_names = [f"{UPLOAD_FOLDER}/{assignment_code}/{user.id}-{idx+1}.txt" for idx in range(3)]
+
     submissions = []
     for file_name in file_names:
         submission = Submission.query.filter_by(file_name=file_name).first()
@@ -299,16 +300,29 @@ def AssignmentMain(assignment_code):
             submissions.append(submission)
         else:
             submissions.append(None)
+    print(submissions)
+
+    submission_id = request.args.get("view")
+    if submission_id:
+        submission = Submission.query.filter_by(id=submission_id).first()
+        if not submission in user.submissions:
+            flash("Permission denied", "danger")
+            submission_id = None
+
 
     submission_program = ""
-    for submission in submissions:
-        if submission:
-            code_file = open(submission.file_name, "r")
-            submission_program = code_file.read()
-            break
+    if submission_id:
+        code_file = open(submission.file_name, "r")
+        submission_program = code_file.read()
+    else:
+        for submission in submissions:
+            if submission:
+                code_file = open(submission.file_name, "r")
+                submission_program = code_file.read()
+                break
 
     if request.method == "GET":
-        return render_template("assignment_main.html", assignment=assignment, current_time=datetime.now, strftime=lambda x: x.strftime("%a, %d %b %Y at %I:%M %p"), submission_program=submission_program)
+        return render_template("assignment_main.html", assignment=assignment, current_time=datetime.now, strftime=lambda x: x.strftime("%a, %d %b %Y at %I:%M %p"), submission_program=submission_program, submissions=submissions)
     else:
         code = request.form.get("code")
         language = request.form.get("language")
@@ -324,7 +338,7 @@ def AssignmentMain(assignment_code):
         new_submission = Submission(new_file_name, results, language, assignment, user)
 
         if submissions[-1]:
-            submission = submissions[-1]
+            submission = submissions.pop(-1)
             os.remove(submission.file_name)
             db.session.delete(submission)
             db.session.commit()
@@ -396,7 +410,6 @@ def SubmissionCheck(code, language, assignment_code):
     }
 
     import requests
-    import json
 
     url = "https://api.jdoodle.com/v1/execute"
     body = {

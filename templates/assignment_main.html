@@ -32,13 +32,6 @@
 {% endblock %}
 
 {% block body %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/classroom/{{ assignment['classroom'].code }}"
-                style="text-decoration: none;">{{ assignment["classroom"].name }}</a></li>
-        <li class="breadcrumb-item">{{ assignment["name"] }}</li>
-    </ol>
-</nav>
 <div class="container mb-2">
     <div class="my-4 card text-light" style="background-color: rgb(253, 158, 70); border: 6px solid rgb(201, 124, 53);">
         <div class="card-body">
@@ -115,52 +108,44 @@
                 <thead class="bg-dark text-light">
                     <th>Name</th>
                     <th>Test cases</th>
-                    <th>Download</th>
                 </thead>
                 {% for student in assignment.classroom.students %}
                 {% set submitted = {"value": False} %}
                 {% for submission in assignment.submissions if submission.student.id == student.id %}
+                    {% if submission.file_name.split( ".txt" )[0][-1] == '1' %}
+                    <tr class="">
+                        {% if submitted.update({"value": True}) %}{% endif %}
 
-                <tr class="">
-                    {% if submitted.update({"value": True}) %}{% endif %}
+                        <td class="">{{ student.name }}</td>
+                        <td class="">
+                            {% for case in submission.results %}
+                            {% if case == "1" %}
+                            <span class="text-success mr-2">
+                                &check;
+                            </span>
+                            {% else %}
+                            <span class="text-danger mr-2">
+                                &cross;
+                            </span>
+                            {% endif %}
+                            {% endfor %}
+                        </td>
 
-                    <td class="">{{ student.name }}</td>
-                    <td class="">
-                        {% for case in submission.result %}
-                        {% if case == "1" %}
-                        <span class="text-success mr-2">
-                            <img src="{{ url_for('static', filename='images/case-success.png') }}" class="img"
-                                width="25px" height="25px" alt="&cross;" />
-                        </span>
-                        {% else %}
-                        <span class="text-danger mr-2">
-                            <img src="{{ url_for('static', filename='images/case-danger.png') }}" class="img"
-                                width="25px" height="25px" alt="&cross;" />
-                        </span>
-                        {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        <a href="/submission/download/{{ submission.file_name.split( os_sep )[2:] | join('/') }}"
-                            class="px-1">
-                            <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img"
-                                width="30px" height="30px" alt="&downarrow;" />
-                        </a>
-                    </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
 
-                </tr>
-                {% endfor %}
-                {% if submitted.value == False %}
-                <tr class="">
-                    <td class="">{{ student.name }}</td>
-                    <td class="">
-                        Not submitted
-                    </td>
-                    <td>
+                    {% if submitted.value == False %}
+                    <tr class="">
+                        <td class="">{{ student.name }}</td>
+                        <td class="">
+                            Not submitted
+                        </td>
+                        <td>
 
-                    </td>
-                </tr>
-                {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}
 
             </table>
@@ -195,15 +180,52 @@
                 </div>
                 <button type="button" class="btn btn-primary my-4" onclick="checkAssignment()">Run</button>
                 {% if assignment.deadline %}
-                {% if assignment.deadline >= current_time() %}
-                <button type="submit" class="btn btn-success my-4" id="assignment_submit">Submit</button>
-                {% else %}
-                <span class="d-inline text-danger ml-3 font-weight-bold">Deadline exceeded</span>
-                {% endif %}
+                    {% if assignment.deadline >= current_time() %}
+                        <button type="submit" class="btn btn-success my-4" id="assignment_submit">Submit</button>
+                    {% else %}
+                        <span class="d-inline text-danger ml-3 font-weight-bold">Deadline exceeded</span>
+                    {% endif %}
                 {% endif %}
 
             </form>
-            <!-- <textarea class="function-control w-75" id="my-textarea" cols="30" rows="10" style="border: 3px solid rgb(103, 158, 241); border-radius: 10px;"></textarea> -->
+
+
+            <table class="table table-hover table-bordered mt-2">
+                <thead class="bg-dark text-light">
+                    <th>No.</th>
+                    <th>Test cases</th>
+                    <th>View code</th>
+                </thead>
+                {% for submission in submissions %}
+
+                    {% if submission %}
+                        <tr class="">
+                            <td class="">{{ loop.index }}</td>
+                            <td class="">
+                                {% for case in submission.results %}
+                                {% if case == "1" %}
+                                <span class="text-success mr-2">
+                                    &check;
+                                </span>
+                                {% else %}
+                                <span class="text-danger mr-2">
+                                    &cross;
+                                </span>
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <a href="/assignment/{{ assignment['code'] }}?view={{ submission['id'] }}"
+                                    class="px-1">
+                                    View
+                                </a>
+                            </td>
+
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+
+            </table>
 
         </div>
         {% endif %}

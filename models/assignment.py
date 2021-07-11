@@ -31,6 +31,7 @@ class Assignment(db.Model):
     deadline = db.Column(db.DateTime, nullable=False)
 
     classroom_id = db.Column(db.Integer, db.ForeignKey("classroom.id"))
+    submissions = db.relationship("Submission", backref="assignment", lazy=True)
 
     def __init__(self, name, description, deadline, classroom) -> None:
         super().__init__()
