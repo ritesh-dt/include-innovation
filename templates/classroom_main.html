@@ -8,16 +8,16 @@
 <div class="container">
 
 
-    <div class="my-4 card text-light" style="background-image: url(../static/img/bg.png);">
+    <div class="card my-4 text-light" style="background-image: url(../static/img/bg.png);">
         <div class="card-body">
             <div class="row align-items-center p-2">
                 <span class="h2 text-light col-auto" style="font-weight: 900;">{{ classroom["name"] }} </span>
                 <span class="col-auto ml-auto font-weight-bold">Class code: {{ classroom["code"] }}</span>
             </div>
         </div>
-        <div class="card-footer p-2 px-4">
+        <div class="card-footer px-5">
             <div class="row align-items-center">
-                <h6 class="col-auto">{{ classroom["desc"] }}</h6>
+                <h6 class="col-auto text-light">{{ classroom["description"] }}</h6>
                 <h5 class="col-auto ml-auto">{{ classroom["teacher"].name }}</h5>
             </div>
 
@@ -40,34 +40,50 @@
                 {% endif %}
         </div>
 
-        <div class="row mx-2">
-            {% for idx in range(0, assignments|length, 3) %}
-            <!-- <div class="card-deck"> -->
-            {% for assignment in assignments[idx:idx+3] %}
-            <div class="col-lg-4 my-2">
-                <div class="card hover-shadow border-secondary ">
-                    <div class="card-body">
-                        <a href="/assignment/{{ assignment['code'] }}"
-                            class="card-title h5 text-decoration-none text-success">{{ assignment['name'] }}</a>
-                        <p class="card-text text-muted mt-2 text-truncate">{{ assignment['desc'] }}</p>
+
+        <section id="team" class="team section-bg">
+            <div class="container" data-aos="fade-up">
+                <div class="row">
+
+
+                    {% for idx in range(0, assignments|length, 3) %}
+                    {% for assignment in assignments[idx:idx+3] %}
+                    <div class="col-lg-6 my-3">
+                        <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="100">
+                            <h1 style="font-size: 5rem;"><i class='bx bx-notepad'></i></h1>
+
+                            <div class="member-info">
+                                <h4> <a href="/assignment/{{ assignment['code'] }}" style="color: #37517e;">{{ assignment['name'] }}</a></h4>
+                                <span>{{ assignment['desc'] }}</span>
+                                <span >
+                                    Due:
+                                    <span class="
+                                                    {% if assignment.deadline and assignment.deadline < current_time() %}
+                                                        text-danger
+                                                            
+                                                    {% else %}
+                                                    text-success
+                                            
+                                                    {% endif %}">
+                                        {{ strftime(assignment.deadline) }}
+                                    </span>
+                                </span>
+                               
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-footer row mx-0 align-items-center pl-1">
-                        <span>
-                            Due:
-                            <span class="
-                                            {% if assignment.deadline and assignment.deadline < current_time() %}
-                                                text-danger
-                                            {% endif %}">
-                                {{ strftime(assignment.deadline) }}
-                            </span>
-                        </span>
-                    </div>
+                    {% endfor %}
+
+                    {% endfor %}
+
+
+
                 </div>
+                
+
             </div>
-            {% endfor %}
-            <!-- </div> -->
-            {% endfor %}
-        </div>
+        </section>
+
         {% if session["user_type"] == "teacher" %}
         <div class="row mt-4 align-middle mx-auto">
             <h5 class="col-auto mr-auto">Students</h5>
@@ -108,14 +124,6 @@
 
 </div>
 
-
-<div class="container my-5"></div>
-<div class="container my-5"></div>
-<div class="container my-5"></div>
-<div class="container my-5"></div>
-<div class="container my-5"></div>
-<div class="container my-5"></div>
-<div class="container my-5"></div>
 
 {% endblock %}
 

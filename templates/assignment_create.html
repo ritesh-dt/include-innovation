@@ -5,11 +5,14 @@
 
 {% block body %}
 <div class="container">
-    <div class="container my-4" style="background-color: #f3f5fa; border: 1px solid #dfdfff;">
+    <div class="card mt-5 py-2" style="background-color: #37517e;">
+        <div class="card-body"><h3 class="text-light">Create New Assignment</h3></div>
+    </div>
+    <div class="container my-4 p-5" style="background-color: #f3f5fa; border: 1px solid #dfdfff;">
         <form action="/classroom/{{ session['class_code'] }}/assignment/create", method="POST">
             <div class="mb-4">
                 <label for="assignment_name">
-                    <h5 class="text-success">Assignment name:</h5>
+                    <h5>Assignment name:</h5>
                 </label>
                 <input class="form-control w-50" type="text" maxlength="30" id="assignment_name" name="assignment_name" required>
             </div>
@@ -49,7 +52,7 @@
                 </div>
     
                 <div class="col-lg-4 col-md-12">
-                    <button type="button" class="btn btn-sm btn-outline-success" onclick="addInputOutputCase()">Add case</button>
+                    <button type="button" class="btn-lightblue px-3 py-2" onclick="addInputOutputCase()">Add case</button>
                 </div>
             </div>
     
@@ -64,11 +67,12 @@
                 </div>
             </div>
     
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn-lightblue px-3 py-2">Create</button>
             <br><br><br><br><br>
         </form>
     </div>
 </div>
+<div class="container py-5"></div>
 
 {% endblock %}
 

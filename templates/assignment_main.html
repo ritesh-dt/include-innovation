@@ -33,12 +33,12 @@
 
 {% block body %}
 <div class="container mb-2">
-    <div class="my-4 card text-light" style="background-color: rgb(253, 158, 70); border: 6px solid rgb(201, 124, 53);">
+    <div class="my-4 card text-light" style="background-image: url(/static/img/bg.png);">
         <div class="card-body">
             <div class="row align-items-center p-2">
-                <span class="h2 text-light col-auto" style="text-shadow: 2px 2px #444444ff;">{{ assignment["name"]
+                <span class="h2 text-light col-auto" style="font-weight: 900;">{{ assignment["name"]
                     }}</span>
-                <span class="col-auto ml-auto font-weight-bold" style="color: rgb(136, 84, 35); font-size: 1.15rem;">
+                <span class="col-auto ml-auto font-weight-bold text-light">
                     Due:
                     <span
                         class="{% if assignment.deadline and assignment.deadline < current_time() %} text-danger {% endif %}">{{
@@ -46,35 +46,35 @@
                 </span>
             </div>
         </div>
-        <div class="card-footer px-4" style="background-color: rgb(201, 124, 53);">
+        <div class="card-footer px-5">
             <div class="row align-items-center">
-                <div class="col-auto">{{ assignment["desc"] }}</div>
-                <div class="col-auto ml-auto font-weight-bold"> Code: {{ assignment["code"] }}</div>
+                <div class="col-auto text-light">{{ assignment["description"] }}</div>
+                <div class="col-auto ml-auto font-weight-bold text-light"> Code: {{ assignment["code"] }}</div>
             </div>
 
         </div>
     </div>
     {% if session["user_type"] == "teacher" %}
     <div class="mb-3 mx-2">
-        <a class="btn btn-outline-success" href="/assignment/{{ assignment['code'] }}/edit"><i class="fas fa-edit"></i>
+        <a class="btn-lightblue px-4 py-2" href="/assignment/{{ assignment['code'] }}/edit"><i class="fas fa-edit"></i>
             Edit assignment</a>
     </div>
     {% endif %}
 
-    <div class="container">
+    <div class="container p-4" style="background-color: #f3f5fa; border: 1px solid #dfdfff; margin-bottom: 200px;">
         <div class="row">
             <div class="col-lg-6 col-md-12 mb-3">
-                <h5 class="text-success mr-1">Input</h5>
+                <h5 class="mr-1">Input</h5>
                 <textarea class="form-control w-100" cols="25" rows="2"
                     readonly>{{ assignment['input_format'] }}</textarea>
             </div>
             <div class="col-lg-6 col-md-12 mb-3">
-                <h5 class="text-success mr-1">Output</h5>
+                <h5 class="mr-1">Output</h5>
                 <textarea class="form-control" cols="25" rows="2" readonly>{{ assignment['output_format'] }}</textarea>
             </div>
         </div>
 
-        <h5 class="text-success">Constraints</h5>
+        <h5 class="">Constraints</h5>
         <div class="container mb-3">
             {% if assignment["constraints"] %}
             <p>{{ assignment["constraints"] }}</p>
@@ -85,19 +85,19 @@
         {% if session["user_type"] == "teacher" %}
         <div class="">
             <div class="row">
-                <h5 class="col-auto text-success">Submissions</h5>
+                <h5 class="col-auto">Submissions</h5>
 
                 <div class="col-auto ml-auto px-1 mr-3 align-items-center">
                     <span>
                         Download all:
                     </span>
                     <a href="/submission/download/{{ assignment['code'] }}/all">
-                        <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img" width="35px"
+                        <img src="{{ url_for('static', filename='img/download-file.png') }}" class="img" width="35px"
                             height="35px" alt="&downarrow;" /></a>
 
                     <span class="ml-3">Results</span>
                     <a href="/submission/download/{{ assignment['code'] }}/results">
-                        <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img" width="35px"
+                        <img src="{{ url_for('static', filename='img/download-file.png') }}" class="img" width="35px"
                             height="35px" alt="&downarrow;" /></a>
                 </div>
 
@@ -105,7 +105,7 @@
 
             {% if assignment.classroom.students %}
             <table class="table table-hover table-bordered mt-2">
-                <thead class="bg-dark text-light">
+                <thead class="text-light" style="background-color:#37517e ;">
                     <th>Name</th>
                     <th>Test cases</th>
                 </thead>
