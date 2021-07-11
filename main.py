@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template,request,redirect,url_for,flash,session
 
 from datetime import datetime
+import os, json
 
 # Database and Models
 from models.database import db
@@ -9,15 +10,15 @@ from models.student import Student
 from models.teacher import Teacher
 from models.classroom import Classroom
 from models.assignment import Assignment
+from models.submission import Submission
 
 app = Flask(__name__)
 app.secret_key = "WCEHACKATHON"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+UPLOAD_FOLDER = "submissions"
 
 # Initialize database
-
-
 with app.app_context():
     db.init_app(app)
     # db.drop_all()
@@ -266,6 +267,9 @@ def AssignmentCreate(class_code):
         new_assignment.output_cases = output_cases
         new_assignment.constraints = constraints
 
+        assignment_folder = f"{UPLOAD_FOLDER}/{new_assignment.code}/"
+        if not os.path.exists(assignment_folder):
+            os.mkdir(assignment_folder)
 
         db.session.add(new_assignment)
         db.session.commit()
@@ -286,9 +290,190 @@ def AssignmentMain(assignment_code):
         flash("Assignment not found!", "danger")
         return redirect(url_for("dashboard"))
 
-    if request.method == "GET":
-        return render_template("assignment_main.html", assignment=assignment, current_time=datetime.now, strftime=lambda x: x.strftime("%a, %d %b %Y at %I:%M %p"))
+    user = GetUser(session["email"])
+    file_names = [f"{UPLOAD_FOLDER}/{assignment_code}/{user.id}-{idx}.txt" for idx in range(3)]
+    submissions = []
+    for file_name in file_names:
+        submission = Submission.query.filter_by(file_name=file_name).first()
+        if submission:
+            submissions.append(submission)
+        else:
+            submissions.append(None)
 
+    submission_program = ""
+    for submission in submissions:
+        if submission:
+            code_file = open(submission.file_name, "r")
+            submission_program = code_file.read()
+            break
+
+    if request.method == "GET":
+        return render_template("assignment_main.html", assignment=assignment, current_time=datetime.now, strftime=lambda x: x.strftime("%a, %d %b %Y at %I:%M %p"), submission_program=submission_program)
+    else:
+        code = request.form.get("code")
+        language = request.form.get("language")
+        assignment_code = request.form.get("assignment_code")
+
+        if not os.path.exists(f"{UPLOAD_FOLDER}/{assignment_code}/"):
+            os.mkdir(f"{UPLOAD_FOLDER}/{assignment_code}/")
+
+        results = json.loads(SubmissionCheck(code, language, assignment_code))
+        results = "".join(["1" if test_case["solved"] else "0" for test_case in results["test_cases"]])
+
+        new_file_name = f"{UPLOAD_FOLDER}/{assignment_code}/{user.id}-1.txt"
+        new_submission = Submission(new_file_name, results, language, assignment, user)
+
+        if submissions[-1]:
+            submission = submissions[-1]
+            os.remove(submission.file_name)
+            db.session.delete(submission)
+            db.session.commit()
+
+        for submission in reversed(submissions):
+            if submission:
+                current_name = submission.file_name
+                idx = int(current_name.split(".txt")[0][-1])
+                new_name = f"{UPLOAD_FOLDER}/{assignment_code}/{user.id}-{idx+1}.txt"
+
+                os.rename(current_name, new_name)
+                submission.file_name = new_name
+                db.session.commit()
+
+        submissions.append(new_submission)
+        new_file = open(new_file_name, "w+")
+        for line in code.split("\n"):
+            new_file.write(line)
+
+        db.session.add(new_submission)
+        db.session.commit()
+
+        flash("Assignment submitted!", "success")
+        return redirect(url_for("AssignmentMain", assignment_code=assignment_code))
+
+
+
+# Code checking Module
+@app.route("/check", methods=["POST"])
+def check():
+    code = request.json.get("code")
+    language = request.json.get("language")
+    assignment_code = request.json.get("assignment_code")
+
+    return SubmissionCheck(code, language, assignment_code)
+
+def SubmissionCheck(code, language, assignment_code):
+    supported_languages = {
+        "C (GCC 5.3.0)": "c",
+        "C (GCC 9.1.0)": "c",
+        "C++": "cpp",
+        "C++14": "cpp14",
+        "C++17": "cpp17",
+        "Java (JDK 11.0.4)": "java",
+        "Python 2 (2.7.16)": "python2",
+        "Python 3 (3.7.4)": "python3"
+    }
+    versionIds = {
+        "C (GCC 5.3.0)": "0",
+        "C (GCC 9.1.0)": "4",
+        "C++": "4",
+        "C++14": "3",
+        "C++17": "0",
+        "Java (JDK 11.0.4)": "3",
+        "Python 2 (2.7.16)": "2",
+        "Python 3 (3.7.4)": "3"
+    }
+
+    assignment = Assignment.query.filter_by(code=assignment_code).first()
+    if not assignment:
+        return json.dumps("No assignment found in database!")
+
+    input_cases = assignment.input_cases.split("----")
+    output_cases = assignment.output_cases.split("----")
+
+    results = {
+        "result": 0,
+        "test_cases": []
+    }
+
+    import requests
+    import json
+
+    url = "https://api.jdoodle.com/v1/execute"
+    body = {
+        "clientId": "2ce11d64a18b40825e71eb25cba1e7be",
+        "clientSecret": "***REMOVED***",
+        "script": code,
+        "language": supported_languages[language],
+        "stdin": "",
+        "versionIndex": versionIds[language]
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+
+    for idx in range(len(input_cases)):
+        stdin = input_cases[idx]
+        stdout = output_cases[idx]
+
+        body["stdin"] = stdin
+
+        response = requests.post(url, json=body, headers=headers)
+        response = response.json()
+
+        if response["statusCode"] == 200:
+            print(response["output"], stdout)
+            if check_output(response["output"], stdout):
+                results["test_cases"].append({
+                    "solved": True,
+                    "output": response["output"]
+                })
+                results["result"] += 1
+            else:
+                results["test_cases"].append({
+                    "solved": False,
+                    "output": response["output"]
+                })
+        elif response["statusCode"] == 400:
+            print(response["error"])
+            results["test_cases"].append({
+                "solved": False,
+                "output": response["error"]
+            })
+        else:
+            print(response)
+
+    return json.dumps(results)
+
+def check_output(output, output_test_case):
+    output_values = []
+    for line in output.strip().split("\n"):
+        if not line:
+            continue
+        for value in line.split(" "):
+            try:
+                float(value)
+                output_values.append(float(value))
+            except ValueError:
+                output_values.append(value)
+
+    expected_values = []
+    for line in output_test_case.strip().split("\n"):
+        if not line:
+            continue
+        for value in line.split(" "):
+            try:
+                float(value)
+                expected_values.append(float(value))
+            except ValueError:
+                expected_values.append(value)
+
+    for val1, val2 in zip(output_values, expected_values):
+        if not val1 == val2 and not str(val1) == str(val2):
+            return False
+
+    return True
 
 if __name__ == "__main__":
     app.run(debug=True)

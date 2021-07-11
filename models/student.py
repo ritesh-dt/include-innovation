@@ -15,6 +15,7 @@ class Student(db.Model):
     password = db.Column(db.String(64), nullable=False)
 
     classrooms = db.relationship("Classroom", secondary=students, backref=db.backref("students", lazy=True))
+    submissions = db.relationship("Submission", backref="student", lazy=True)
 
     def __init__(self, name, email, password) -> None:
         super().__init__()

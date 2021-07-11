@@ -8,6 +8,7 @@
     .text-orange {
         color: rgb(32, 113, 206) !important;
     }
+
     .case-danger {
         font-family: 'arial';
         color: #000;
@@ -15,6 +16,7 @@
         padding: 8px 0px 8px 6px;
         background-color: #ffbbbb;
     }
+
     .case-success {
         font-family: 'arial';
         color: #000;
@@ -22,6 +24,7 @@
         padding: 8px 0px 8px 6px;
         background-color: #bbffbb;
     }
+
     .CodeMirror {
         font-size: 16px;
     }
@@ -39,11 +42,13 @@
 <div class="container mb-2">
     <div class="my-4 card text-light" style="background-color: rgb(253, 158, 70); border: 6px solid rgb(201, 124, 53);">
         <div class="card-body">
-            <div class="row align-items-center p-2" >
-                <span class="h2 text-light col-auto" style="text-shadow: 2px 2px #444444ff;">{{ assignment["name"] }}</span>
+            <div class="row align-items-center p-2">
+                <span class="h2 text-light col-auto" style="text-shadow: 2px 2px #444444ff;">{{ assignment["name"]
+                    }}</span>
                 <span class="col-auto ml-auto font-weight-bold" style="color: rgb(136, 84, 35); font-size: 1.15rem;">
                     Due:
-                    <span class="{% if assignment.deadline and assignment.deadline < current_time() %} text-danger {% endif %}">{{
+                    <span
+                        class="{% if assignment.deadline and assignment.deadline < current_time() %} text-danger {% endif %}">{{
                         strftime(assignment.deadline) }}</span>
                 </span>
             </div>
@@ -57,9 +62,10 @@
         </div>
     </div>
     {% if session["user_type"] == "teacher" %}
-        <div class="mb-3 mx-2">
-            <a class="btn btn-outline-success" href="/assignment/{{ assignment['code'] }}/edit"><i class="fas fa-edit"></i> Edit assignment</a>
-        </div>
+    <div class="mb-3 mx-2">
+        <a class="btn btn-outline-success" href="/assignment/{{ assignment['code'] }}/edit"><i class="fas fa-edit"></i>
+            Edit assignment</a>
+    </div>
     {% endif %}
 
     <div class="container">
@@ -78,9 +84,9 @@
         <h5 class="text-success">Constraints</h5>
         <div class="container mb-3">
             {% if assignment["constraints"] %}
-                <p>{{ assignment["constraints"] }}</p>
+            <p>{{ assignment["constraints"] }}</p>
             {% else %}
-                <p>No constraints</p>
+            <p>No constraints</p>
             {% endif %}
         </div>
         {% if session["user_type"] == "teacher" %}
@@ -93,11 +99,13 @@
                         Download all:
                     </span>
                     <a href="/submission/download/{{ assignment['code'] }}/all">
-                        <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img" width="35px" height="35px" alt="&downarrow;"/></a>
+                        <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img" width="35px"
+                            height="35px" alt="&downarrow;" /></a>
 
                     <span class="ml-3">Results</span>
                     <a href="/submission/download/{{ assignment['code'] }}/results">
-                        <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img" width="35px" height="35px" alt="&downarrow;"/></a>
+                        <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img" width="35px"
+                            height="35px" alt="&downarrow;" /></a>
                 </div>
 
             </div>
@@ -110,46 +118,49 @@
                     <th>Download</th>
                 </thead>
                 {% for student in assignment.classroom.students %}
-                    {% set submitted = {"value": False} %}
-                    {% for submission in assignment.submissions if submission.student.id == student.id %}
+                {% set submitted = {"value": False} %}
+                {% for submission in assignment.submissions if submission.student.id == student.id %}
 
-                            <tr class="">
-                                {% if submitted.update({"value": True}) %}{% endif %}
+                <tr class="">
+                    {% if submitted.update({"value": True}) %}{% endif %}
 
-                                <td class="">{{ student.name }}</td>
-                                <td class="">
-                                    {% for case in submission.result %}
-                                    {% if case == "1" %}
-                                    <span class="text-success mr-2">
-                                        <img src="{{ url_for('static', filename='images/case-success.png') }}" class="img" width="25px" height="25px" alt="&cross;"/>
-                                    </span>
-                                    {% else %}
-                                    <span class="text-danger mr-2">
-                                        <img src="{{ url_for('static', filename='images/case-danger.png') }}" class="img" width="25px" height="25px" alt="&cross;"/>
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    <a href="/submission/download/{{ submission.file_name.split( os_sep )[2:] | join('/') }}"
-                                    class="px-1">
-                                    <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img" width="30px" height="30px" alt="&downarrow;"/>
-                                    </a>
-                                </td>
+                    <td class="">{{ student.name }}</td>
+                    <td class="">
+                        {% for case in submission.result %}
+                        {% if case == "1" %}
+                        <span class="text-success mr-2">
+                            <img src="{{ url_for('static', filename='images/case-success.png') }}" class="img"
+                                width="25px" height="25px" alt="&cross;" />
+                        </span>
+                        {% else %}
+                        <span class="text-danger mr-2">
+                            <img src="{{ url_for('static', filename='images/case-danger.png') }}" class="img"
+                                width="25px" height="25px" alt="&cross;" />
+                        </span>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="/submission/download/{{ submission.file_name.split( os_sep )[2:] | join('/') }}"
+                            class="px-1">
+                            <img src="{{ url_for('static', filename='images/download-file.png') }}" class="img"
+                                width="30px" height="30px" alt="&downarrow;" />
+                        </a>
+                    </td>
 
-                            </tr>
-                    {% endfor %}
-                    {% if submitted.value == False %}
-                        <tr class="">
-                            <td class="">{{ student.name }}</td>
-                            <td class="">
-                                Not submitted
-                            </td>
-                            <td>
+                </tr>
+                {% endfor %}
+                {% if submitted.value == False %}
+                <tr class="">
+                    <td class="">{{ student.name }}</td>
+                    <td class="">
+                        Not submitted
+                    </td>
+                    <td>
 
-                            </td>
-                        </tr>
-                    {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
                 {% endfor %}
 
             </table>
@@ -161,45 +172,34 @@
             <form name="assignment_form" method="POST">
                 <div class="row">
                     <div class="col-6">
-                        <label for="assignment_lang">Language: </label>
-                        <select name="assignment_lang" id="assignment_lang" class="w-auto" onchange="changeMode()" required>
-                            {% for lang in ["C", "C++", "Java", "Python"] %}
-                            <option value="{{ lang }}"  {% if submission and submission.language == lang %}   selected    {% endif %} >{{ lang }}</option>
-
+                        <label for="language">Language: </label>
+                        <select name="language" id="language" class="w-auto" onchange="changeMode()" required>
+                            {% for lang in ["C (GCC 5.3.0)", "C (GCC 9.1.0)", "C++", "C++14", "C++17", "Java (JDK
+                            11.0.4)", "Python 2 (2.7.16)", "Python 3 (3.7.4)"] %}
+                            <option value="{{ lang }}" {% if submission and submission.language==lang %} selected {%
+                                endif %}>{{ lang }}</option>
                             {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="col-auto ml-auto">
-                        <label for="assignment_theme">Theme: </label>
-                        <select name="assignment_theme" id="assignment_theme" class="w-auto" onchange="changeTheme()" >
-                            <option value="default">default</option>
-                            <option value="3024-night">3024-night</option>
-                            <option value="eclipse">eclipse</option>
-                            <option value="neat">neat</option>
-                            <option value="cobalt">cobalt</option>
-                            <option value="material">material</option>
                         </select>
                     </div>
                 </div>
 
                 <input type="text" name="assignment_code" value="{{ assignment['code'] }}" required readonly hidden />
-                <label for="assignment_program" class="mt-3">Program: </label>
+                <label for="code" class="mt-3">Program: </label>
 
                 <div style="border: 2px solid lightslategray; border-radius: 5px;">
-                    <textarea id="assignment_program" name="assignment_program" class="form-control" required>{{ submission_program }}</textarea>
+                    <textarea id="code" name="code" class="form-control" required>{{ submission_program }}</textarea>
                 </div>
 
-                <div id="assignment_result" class="row mt-2 px-1">
+                <div id="results" class="row mt-2 px-1">
                     <!-- <p class="text-muted">Submit assignment first!</p> -->
                 </div>
                 <button type="button" class="btn btn-primary my-4" onclick="checkAssignment()">Run</button>
-                    {% if assignment.deadline %}
-                        {% if assignment.deadline >= current_time() %}
-                            <button type="submit" class="btn btn-success my-4" id="assignment_submit">Submit</button>
-                        {% else %}
-                            <span class="d-inline text-danger ml-3 font-weight-bold">Deadline exceeded</span>
-                        {% endif %}
+                {% if assignment.deadline %}
+                {% if assignment.deadline >= current_time() %}
+                <button type="submit" class="btn btn-success my-4" id="assignment_submit">Submit</button>
+                {% else %}
+                <span class="d-inline text-danger ml-3 font-weight-bold">Deadline exceeded</span>
+                {% endif %}
                 {% endif %}
 
             </form>
@@ -209,22 +209,24 @@
         {% endif %}
     </div>
 </div>
+<br /><br /><br /><br />
 
 {% endblock %}
 
 {% block scripts %}
 
 <script>
-    language = document.getElementById("assignment_lang").value;
-    program = document.getElementById("assignment_program").value;
+    language = document.getElementById("language").value;
+    program = document.getElementById("code").value;
 
     const assignment_form = document.forms.assignment_form;
 
-    const url = "/api/check";
+    const url = "/check";
 
     function checkAssignment(e) {
-        assignment_form.elements["assignment_program"].value = editor.getValue();
+        assignment_form.elements["code"].value = editor.getValue();
         const body = JSON.stringify(Object.fromEntries(new FormData(assignment_form)));
+        console.log(body);
 
         fetch(url, {
             method: "POST",
@@ -235,14 +237,18 @@
         })
             .then(resp => resp.json())
             .then(text => {
-                assignment_result = document.getElementById("assignment_result");
-                assignment_result.innerHTML = "";
+
+                results = document.getElementById("results");
+                results.innerHTML = "";
+                test_cases = text["test_cases"];
 
                 assignment_submit = document.getElementById("assignment_submit");
 
-                for (let i = 1; i < text.length; i++) {
-                    console.log(text[i], i);
-                        elem = document.createElement("div");
+                console.log(test_cases);
+                for (let i = 0; i < test_cases.length; i++) {
+                    console.log(test_cases[i], i);
+
+                    elem = document.createElement("div");
 
                     let pChild = document.createElement("pre");
                     elem.appendChild(pChild);
@@ -250,13 +256,13 @@
                     elem.className = "col-12 col-md-6 col-lg-3";
                     pChild.className = "font-weight-bold";
 
-                    pChild.textContent = "Test case " + i + ": " + text[i];
+                    pChild.textContent = "Test case " + i + ": " + test_cases[i]["output"];
 
-                    if (text[i].includes("ERROR") || text[i].includes("INCORRECT"))
-                        pChild.classList += " case-danger";
+                    if (test_cases[i]["solved"] == false)
+                        pChild.classList += " bg-danger";
                     else
-                        pChild.classList += " case-success";
-                    assignment_result.appendChild(elem);
+                        pChild.classList += " bg-success";
+                    results.appendChild(elem);
 
                 }
             })
@@ -265,18 +271,48 @@
 </script>
 <!-- codemirror scripts (vishal) -->
 
-<script src="{{ url_for('static', filename = 'scripts/codemirror.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/codemirror/codemirror.js') }}"></script>
 
 <!-- addon (activeline, bracket completion) -->
-<script src="{{ url_for('static', filename = 'scripts/active-line.js') }}"></script>
-<script src="{{ url_for('static', filename = 'scripts/matchbrackets.js') }}"></script>
-<script src="{{ url_for('static', filename = 'scripts/closebrackets.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/codemirror/active-line.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/codemirror/matchbrackets.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/codemirror/closebrackets.js') }}"></script>
 
 <!-- modes (languages) -->
-<script src="{{ url_for('static', filename = 'scripts/python.js') }}"></script>
-<script src="{{ url_for('static', filename = 'scripts/clike.js') }}"></script>
-<script src="{{ url_for('static', filename = 'scripts/javascript.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/codemirror/python.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/codemirror/clike.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/codemirror/javascript.js') }}"></script>
 
 <!-- main driver script -->
-<script src="{{ url_for('static', filename = 'scripts/code.js')}}"></script>
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"),
+        {
+            lineNumbers: true,
+            mode: "text/x-csrc",
+            theme: "default",
+            styleActiveLine: true,
+            matchBrackets: true,
+            autoCloseBrackets: true
+        });
+
+    var modeInput = document.getElementById("language");
+
+    function changeMode() {
+        var mode = modeInput.selectedIndex;
+
+        if (mode < 2) {
+            editor.setOption("mode", "text/x-csrc");
+        }
+        else if (mode < 5) {
+            editor.setOption("mode", "text/x-c++src");
+        }
+        else if (mode < 6) {
+            editor.setOption("mode", "text/x-java");
+        }
+        else if (mode < 8) {
+            editor.setOption("mode", "python");
+        }
+
+    }
+</script>
 {% endblock %}
