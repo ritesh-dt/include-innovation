@@ -489,8 +489,8 @@ def SubmissionCheck(code, language, assignment_code):
 
     url = "https://api.jdoodle.com/v1/execute"
     body = {
-        "clientId": "2ce11d64a18b40825e71eb25cba1e7be",
-        "clientSecret": "***REMOVED***",
+        "clientId": "JDoodle client id",
+        "clientSecret": "JDoodle client secret key",
         "script": code,
         "language": supported_languages[language],
         "stdin": "",
