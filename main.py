@@ -130,7 +130,7 @@ def dashboard():
         user = GetUser(session["email"])
         classes = []
         for classroom in user.classrooms:
-            print(classroom.name)
+            # print(classroom.name)
             classes.append({
                 "name": classroom.name,
                 "desc": classroom.description,
@@ -304,9 +304,9 @@ def AssignmentCreate(class_code):
         session["class_code"] = class_code
         return render_template("assignment_create.html")
     else:
-        print(class_code)
+        # print(class_code)
         classroom = Classroom.query.filter_by(code=class_code).first()
-        print(classroom)
+        # print(classroom)
         if not classroom:
             flash("Classroom does not exist!", "danger")
             return redirect(url_for("dashboard"))
@@ -361,7 +361,7 @@ def AssignmentMain(assignment_code):
         return redirect(url_for("home"))
 
     assignment = Assignment.query.filter_by(code=assignment_code).first()
-    print(assignment)
+    # print(assignment)
     if not assignment:
         flash("Assignment not found!", "danger")
         return redirect(url_for("dashboard"))
@@ -376,7 +376,7 @@ def AssignmentMain(assignment_code):
             submissions.append(submission)
         else:
             submissions.append(None)
-    print(submissions)
+    # print(submissions)
 
     submission_id = request.args.get("view")
     if submission_id:
@@ -489,8 +489,8 @@ def SubmissionCheck(code, language, assignment_code):
 
     url = "https://api.jdoodle.com/v1/execute"
     body = {
-        "clientId": "JDoodle client id",
-        "clientSecret": "JDoodle client secret key",
+        "clientId": os.environ.get("JDOODLE_CLIENT_ID"),
+        "clientSecret": os.environ.get("JDOODLE_CLIENT_SECRET"),
         "script": code,
         "language": supported_languages[language],
         "stdin": "",
@@ -512,7 +512,7 @@ def SubmissionCheck(code, language, assignment_code):
         response = response.json()
 
         if response["statusCode"] == 200:
-            print(response["output"], stdout)
+            # print(response["output"], stdout)
             if check_output(response["output"], stdout):
                 results["test_cases"].append({
                     "solved": True,
@@ -525,13 +525,13 @@ def SubmissionCheck(code, language, assignment_code):
                     "output": response["output"]
                 })
         elif response["statusCode"] == 400:
-            print(response["error"])
+            # print(response["error"])
             results["test_cases"].append({
                 "solved": False,
                 "output": response["error"]
             })
-        else:
-            print(response)
+        # else:
+            # print(response)
 
     return json.dumps(results)
 
