@@ -3,11 +3,15 @@
 
 > Platform for both teachers and students where they can share and submit programming (coding) assignments.
 
-### Features:
+### Features
 For teachers
 1. Create classrooms.
 2. Allow the students to join the classroom (using a class code).
-3. Create programming assignments with any number of test cases
+3. Create programming assignments with any number of test cases.
+4. Automatic grading of assignments (based on given test cases).
+5. Add/remove test cases even after assignment submission.
+6. Download the grades (as CSV).
+
 
 For students
 1. Join a classroom (using a given class code).
